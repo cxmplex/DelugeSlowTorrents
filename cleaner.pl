@@ -19,7 +19,7 @@ local *get_deluge_info = sub {
         );
 
         # ignore incomplete
-        next if ($state !~ /seeding/i);
+        next if ($deluge_obj{'state'} !~ /seeding/i);
 
         # set seed_time
         $deluge_obj{'seed_time'} =~ /^(\d+)\s([a-z]+)\s(?:([\d]+):(\d+):(\d+))/i;
@@ -107,6 +107,6 @@ while (true) {
         print "Deleting $_ \n";
         my $output = `deluge-console "connect 10.0.0.1:52757 user pass; rm $_ --remove_data"`;
     }
-    sleep 60;
+    sleep 20;
 }
 
