@@ -6,7 +6,7 @@ my %local_collection;
 local *get_deluge_info = sub {
     my $info = `deluge-console "connect 10.0.0.1:52757 user pass; info"`;
     my @collection;
-    while ($info =~ /(?:Name:\s)(.+)\n(?:ID:\s)([a-z0-9]+)\n(?:State:\s)(.+)\n(?:Seeds:\s)(.+)\n(?:Size:\s)(.+)\n(?:Seed time:\s)(.+)\n(?:Tracker status:\s)(.+)/ig) {
+    while ($info =~ /(?:Name:\s)(.+)\n(?:ID:\s)([a-z0-9]+)\n(?:State:\s)(.+)\n(?:Seeds:\s)(.+)\n(?:Size:\s)(.+)\n(?:Seed time:\s)(.+)\n(?:Tracker status:\s)(.+)(?:\n(?:Progress:\s)(\d+))?/ig) {
         # this could be auto-gen by removing the non capture
         my %deluge_obj = (
             'name' => $1,
@@ -17,9 +17,10 @@ local *get_deluge_info = sub {
             'seed_time' => $6,
             'tracker_status' => $7,
         );
-
+        my $c = $8 || '';
+        
         # ignore incomplete
-        next if ($deluge_obj{'state'} !~ /seeding/i);
+        next if ($deluge_obj{'state'} !~ /seeding/i && $c !~ /100/i);
 
         # set seed_time
         $deluge_obj{'seed_time'} =~ /^(\d+)\s([a-z]+)\s(?:([\d]+):(\d+):(\d+))/i;
