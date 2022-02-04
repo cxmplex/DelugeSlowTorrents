@@ -106,6 +106,8 @@ while (true) {
     my $delete_list = get_slow_torrents();
     foreach(@$delete_list) {
         print "Deleting $_ \n";
+        my $output = `deluge-console "connect 10.0.0.1:52757 user pass; pause $_"`;
+        sleep 5;
         my $output = `deluge-console "connect 10.0.0.1:52757 user pass; rm $_ --remove_data"`;
     }
     sleep 20;
